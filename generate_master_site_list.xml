@@ -1,0 +1,38 @@
+<tool id="atlas_master_site_list" description="Collect all variants called in an Atlas experiment." name="Generate Master Site List" version="1.0">
+  <description>Collect all variants called in an Atlas experiment.</description>
+
+  <command interpreter="python">
+    generate_master_site_list.py
+
+    #if str( $vcf_dir ):
+      --vcf-directory $vcf_dir
+    #else:
+      none
+    #end if
+      
+    #if str( $output_file ):
+      --output-file $output_file 
+    #else:
+      none
+    #end if
+
+  </command>
+  <inputs>
+    <param name="vcf_dir" type="text" label="Directory containing VCF files" help=""/>
+    <param name="output_file" type="data" format="txt" label="Name of outputfile" help=""/>
+  </inputs>
+
+  <outputs> 
+    <data format="tabular" name="output" label="Master site list"/>
+  </outputs>
+
+  <help>
+
+  Description:
+  This tool takes a directory of VCF files. It identifies all unique variant sites across all VCF files and produces a file specifying them. 
+
+  Output:
+  A list of unique physical locations contained within the specified VCF files.
+  
+  </help>
+</tool>
