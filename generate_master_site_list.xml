@@ -2,16 +2,16 @@
   <description>Collect all variants called in an Atlas experiment.</description>
 
   <command interpreter="python">
-    generate_master_site_list.py
+    generate_master_site_list.sh
 
     #if str( $vcf_dir ):
-      --vcf-directory $vcf_dir
+      $vcf_dir
     #else:
       none
     #end if
       
     #if str( $output_file ):
-      --output-file $output_file 
+      $output_file 
     #else:
       none
     #end if
