@@ -4,8 +4,8 @@
   <command interpreter="python">
     generate_master_site_list.sh
 
-    #if str( $vcf_dir ):
-      $vcf_dir
+    #if str( $config_file ):
+      $config_file
     #else:
       none
     #end if
@@ -18,7 +18,7 @@
 
   </command>
   <inputs>
-    <param name="vcf_dir" type="text" label="Directory containing VCF files" help=""/>
+    <param name="config_file" type="text" label="Directory containing VCF files" help=""/>
     <param name="output_file" type="data" format="txt" label="Name of outputfile" help=""/>
   </inputs>
 

@@ -1,7 +1,9 @@
 #!/bin/bash
 
 ## parse command line args
-vcf_dir=$1
+config_file=$1
+vcf_dir=$(grep VCF config | awk '{print $2}')
+
 output_file=$2
 
 ## pull ALL variant sites from experiment
