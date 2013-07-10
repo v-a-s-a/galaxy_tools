@@ -9,7 +9,7 @@ output_file=$2
 ## pull ALL variant sites from experiment
 for file in $(ls ${vcf_dir}/*.vcf); do
   echo $file
-  grep -v '^#' $file | cut -f1,2 >> tmp
+  grep -v '^#' $file | cut -f1,2 >> /tmp/atlas_tmp
 done
 
 ## subset to unique sites
