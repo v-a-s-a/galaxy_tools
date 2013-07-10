@@ -2,7 +2,7 @@
 
 ## parse command line args
 config_file=$1
-vcf_dir=$(grep VCF config | awk '{print $2}')
+vcf_dir=$(grep VCF $config | awk '{print $2}')
 
 output_file=$2
 
