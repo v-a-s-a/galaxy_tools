@@ -1,7 +1,7 @@
 <tool id="atlas_master_site_list" description="Collect all variants called in an Atlas experiment." name="Generate Master Site List" version="1.0">
   <description>Collect all variants called in an Atlas experiment.</description>
 
-  <command interpreter="python">
+  <command interpreter="bash">
     generate_master_site_list.sh
 
     #if str( $config_file ):
