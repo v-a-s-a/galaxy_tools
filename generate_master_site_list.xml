@@ -22,7 +22,7 @@
   </inputs>
 
   <outputs> 
-    <data format="tabular" name="output" label="Master site list"/>
+    <data format="tabular" name="output_file" label="Master site list"/>
   </outputs>
 
   <help>
