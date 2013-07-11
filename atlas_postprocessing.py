@@ -7,12 +7,12 @@ import os
 import gzip
 
 ## pulls the SM tag from the header of a BAM
-def extract_sm(bam):
-  bamReader = gzip.open(bam, 'r')
+def extract_sm(bam, direc):
+  bamReader = gzip.open(direc + '/' + bam, 'r')
   for line in bamReader:
     if 'SM' in line:
       fields = line.split()
-      sm = [f for f in fields if f.startswith('SM')][0]
+      sm = [f for f in fields if f.startswith('SM')][0].lstrip('SM:')
       break
   bamReader.close()
   return sm  
@@ -39,10 +39,10 @@ def main():
 
   ## match SM tags to file names
   sampleIds = dict()
-  for (path, dirs, files) in os.walk(bamdir):
+  for (path, dirs, files) in os.walk(opts.bamdir):
     for bam in files:
       if bam.endswith('.bam'):
-        sm = extract_sm(bam)
+        sm = extract_sm(bam, opts.bamdir)
         oldId = construct_id(bam)
         sampleIds[oldId] = sm
 
@@ -50,16 +50,14 @@ def main():
   head = oldvcf.next()
   newvcf.write(head)
   while head.startswith('##'):
+      head = oldvcf.next()
       if head.startswith('#CHROM'):
         break
-      else:
-        head = oldvcf.next()
-        newvcf.write(head)
+      newvcf.write(head)
 
   ## recode the sample Ids
-  line = [ f for f in head.split('') ]
-  line = [ sampleIDs[f] for f in if sampleIDs.get(f) ]
-  newvcf.write(head)
+  line = [ sampleIds[f] if sampleIds.get(f) else f for f in head.split() ]
+  newvcf.write('	'.join(line))
 
   ## recode the chromosome IDs in the file
   for line in oldvcf:
