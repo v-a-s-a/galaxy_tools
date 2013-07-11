@@ -18,7 +18,7 @@
 
   <inputs>
     <param name="input_vcf" type="data" format="vcf" label="Input VCF File"/>
-    <param name="bam_dir" type="text" label="BAM Directory Path" help="">
+    <param name="bam_dir" type="text" label="BAM Directory Path" help=""/>
   </inputs>
 
   <outputs>
