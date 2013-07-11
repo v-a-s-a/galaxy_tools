@@ -13,15 +13,16 @@
   -->
 
   <command interpreter="python">
-    atlas_postprocessing.py -v $input_vcf -o $processed_vcf 
+    atlas_postprocessing.py -v $input_vcf -o $processed_vcf -d $bam_dir
   </command>
 
   <inputs>
-    <param name="input_vcf" type="data" format="vcf" label="input vcf"/>
+    <param name="input_vcf" type="data" format="vcf" label="Input VCF File"/>
+    <param name="bam_dir" type="text" label="BAM Directory Path" help="">
   </inputs>
 
   <outputs>
-    <data format="vcf" name="processed_vcf" label="Processed_VCF"/>
+    <data format="vcf" name="processed_vcf" label="Output VCF File"/>
   </outputs>
 
   <help>
