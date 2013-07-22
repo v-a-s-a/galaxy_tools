@@ -3,13 +3,15 @@
 ## parse command line args
 config_file=$1
 vcf_dir=$(grep VCF $config_file | awk '{print $2}')
+tmp_dir="/tmp/atlas_tmp"
+rm $tmp_dir
 
 output_file=$2
 
 ## pull ALL variant sites from experiment
 for file in $(ls ${vcf_dir}/*.vcf); do
   echo $file
-  grep -v '^#' $file | cut -f1,2 >> /tmp/atlas_tmp
+  grep -v '^#' $file | cut -f1,2 >> $tmp_dir
 done
 
 ## subset to unique sites
