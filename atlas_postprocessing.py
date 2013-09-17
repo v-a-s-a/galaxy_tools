@@ -1,5 +1,7 @@
 '''
-Simple tool to append the string 'chr' to all contig IDs in a vcf file
+Simple tool for post processing ATLAS-SNP2 VCFs. Does two things:
+  1. Append the string 'chr' to all contig IDs in a vcf file.
+  2. Strip .snp.vcf from all sample names.
 '''
 
 import optparse
@@ -57,7 +59,7 @@ def main():
 
   ## recode the sample Ids
   line = [ sampleIds[f] if sampleIds.get(f) else f for f in head.split() ]
-  newvcf.write('	'.join(line))
+  print >> newvcf, '	'.join(line)
 
   ## recode the chromosome IDs in the file
   for line in oldvcf:
