@@ -1,5 +1,6 @@
 import argparse as arg
 import os
+import subprocess as sp
 
 class region:
   """
@@ -24,9 +25,12 @@ class variant:
     return hash(self.ID)
 
   def __eq__(self, other):
-    if self.chrom == other.chrom and self.pos = other.pos: return True
+    if self.chrom == other.chrom and self.pos == other.pos: return True
     else: return False
-
+  
+  def __str__(self):
+    return self.chrom + ':' + str(self.pos)
+  
 class bed:
   """
   Representation of a BED file. Essentially a list of region objects.
@@ -37,19 +41,14 @@ class bed:
     with open(self.bedFile) as f:
       for line in f:
         line = line.strip().split()
-        regions.append(region(chrom=line[0], start=line[1], end=line[2]))
+        if len(line) != 3: continue
+        self.regions.append(region(chrom=line[0], start=line[1], end=line[2]))
 
   def is_present(self, var):
     """
     Check if variant falls within a region described by a BED file.
- 
-    ** We can save this for later -- this is a more complicated idea.
-    ** I wanted to hash region starts and ends
-    To check membership for a given variant:
-      pull tuple of regions associated with chromosome
-      find regions with variant position > start
-      find regions with variant position < end
-    Variant is described in BED if the intersection of the above is non-empty
+
+    ** regions can be ordered -- this needs to be a binary search 
   
     input: object of class 'var'
     return: True if BED contains var, False otherwise.
@@ -67,37 +66,45 @@ def __main__():
   ## parse command line args
   parser = arg.ArgumentParser()
   parser.add_argument('--bed', dest='bedFile')
-  parse.add_argument('--min-qual', dest='minQual', const=0)
-  parser.add_argument('--vcf-dir', dest='vcfDir')
+  parser.add_argument('--min-qual', dest='minQual', nargs='?', const=0)
+  parser.add_argument('--file-dir', dest='fileDir')
+  parser.add_argument('--mode', choices=['vcf', 'indel'], dest='mode')
   parser.add_argument('--out', dest='out')
   args = parser.parse_args()
 
   ## GLOBALS
   minQual = int(args.minQual)
 
-  ## pull the directory of VCF files, and the location of the BED file.
-  for root, files, dirs in os.walk(args.vcfDir):
-    vcfs = [root+x for x in files if x.endswith('vcf')]
+  ## pull the directory of files, and the location of the BED file.
+  if args.mode == 'vcf': fileext = 'vcf'
+  elif args.mode == 'indel': fileext = 'indel'
+  for root, dirs, files in os.walk(args.fileDir):
+    vcfs = [root+x for x in files if x.endswith(fileext)]
 
-  ## make a BED object to check against
+  ## make a BED object to check variant memebership
   bedChecker = bed(args.bedFile)
 
   ## walk VCF files
   uniqVariants = set()
   for vcfFile in vcfs:
-    vcf = open(vcfFile)
-    while vcf.next().startswith('##'): pass
+    print vcfFile
+    ## use ekg's bed filter
+    p = sp.Popen(['vcfintersect', '--bed', args.bedFile, vcfFile], stdout=sp.PIPE)
+    vcf = p.stdout
+    while vcf.next().strip().startswith('##'): pass
     for line in vcf:
-      line = line.split(' ', 8)
+      line = line.split('	', 8)
       var = variant(line[0], line[1])
       ## include only variants that: PASS, are in BED, and have minimum QUAL
-      if line[6]=='PASS' and bedChecker.is_present(var) and int(line[5])>=minQual:
-        uniqVariants.add(var)
-     vcf.close()
+      if not var in uniqVariants:
+        if line[6]=='PASS':
+          if int(line[5])>=minQual:  
+            uniqVariants.add(var)
+    vcf.close()
 
   ## write our variants of interest out to file
   outfile=open(args.out, 'w')
-  for var in uniqVar:
+  for var in uniqVariants:
     print >> outfile, var.chrom + '\t' + str(var.pos)
   outfile.close() 
 
